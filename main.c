@@ -6,15 +6,21 @@
 #include <ctype.h>
 #include <assert.h>
 
+/*
+typedef struct str {
+    char* str;
+    size_t size
+} str_t;
+*/
 typedef struct texty {
     char* text;
     off_t size;
     size_t n_str;
-    char** arr_index_r;
+    char** arr_index_r; // cringe
     char** arr_index_l;
 } text_t;
 
-void f_num_str           (text_t* onegin);
+void f_num_str         (text_t* onegin);
 void input_text_stat   (text_t* onegin);
 void input_arr         (text_t* onegin);
 bool str_compare_left  (const char* const str1, const size_t, 
@@ -29,6 +35,7 @@ void output_s_text     (char** const arr_index, const size_t num_str);
 
 int main() { //\r до \n
     text_t onegin = {};
+    
     input_text_stat (&onegin);
     input_arr(&onegin);
     f_num_str(&onegin);
@@ -39,7 +46,7 @@ int main() { //\r до \n
     output_s_text (onegin.arr_index_l, onegin.n_str);
     output_s_text (onegin.arr_index_r, onegin.n_str);
     free (onegin.arr_index_l);
-    free (onegin.arr_index_r);
+    free (onegin.arr_index_r); 
     printf("meow");
     return 0;
 }
@@ -55,10 +62,10 @@ void f_num_str (text_t* onegin) {
     return;
 }
 
-void input_text_stat (text_t* onegin) {
+void input_text_stat (text_t* onegin) { // cringenaming
     assert(onegin);
 
-    FILE* oneg_r = fopen("onegin_read.txt", "rb");
+    FILE* oneg_r = fopen("onegin_read.txt", "rb"); // unhardcode filename
 
     struct stat buf = {};
     stat ("onegin_read.txt", &buf);
@@ -88,15 +95,15 @@ void input_arr (text_t* onegin) {
                 continue;
             }
             count_str++;
-            onegin->arr_index_l[count_str] = &onegin->text[i+1];
+            onegin->arr_index_l[count_str] = onegin->text + (i+1);
             j = -1; 
             count_alpha = 0;
         } else if (isalpha(onegin->text[i])) {
             count_alpha++;
         } else if (onegin->text[i] == '\r') {
-            (onegin->arr_index_l)[count_str][j] = '\0';
+            onegin->text[i] = '\0';
         } else {
-            onegin->arr_index_l[count_str][j] = (onegin->text)[i];
+            //onegin->arr_index_l[count_str][j] = (onegin->text)[i];
         }
         j++;
     }
@@ -182,9 +189,9 @@ void bubble_sort (char** const arr_str_l, char** const arr_str_r,
 
 void output_s_text (char** const arr_index, const size_t num_str) {
     assert(arr_index);
-
+    perror("error\n");
     FILE* oneg_w = fopen("onegin_output.txt", "w");
-    assert(oneg_w);
+    perror("Error\n");
 
     for (int i = 0; i < num_str; i++) {
         fputs(arr_index[i], oneg_w);
@@ -194,19 +201,7 @@ void output_s_text (char** const arr_index, const size_t num_str) {
 }
 
 /*
-problem:
-use binary file (test trash)
-save 1 version
-fputs it after
-change \r on ...
-output?
-
-struct $$
-num_str like  $$
-calloc <- for {realloc} $$
-fputs for output not sorted text of onegin (do not delete \r n \n) $$
-qsort
-
+swap 1 index of str with... problem?
 */
 
 
