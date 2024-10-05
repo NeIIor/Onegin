@@ -28,7 +28,7 @@ int main() {
     size_t n_str;
     char* text;
     str_t* strings = input_oneg(&n_str, &text);
-    printf("%p\t%d\n", strings, n_str);
+    printf("%p\t%u\n", strings, n_str);
     output_s_text (strings, n_str, oneg_w);
     my_sort (strings, n_str, sizeof(str_t), str_compare_left);
     output_s_text (strings, n_str, oneg_w);
@@ -50,7 +50,7 @@ size_t f_num_str (off_t size, char* text) {
             n_str++;
         }
     }
-    printf("n_str: %d\n", n_str);
+    printf("n_str: %u\n", n_str);
     return n_str;
 }
 
@@ -62,11 +62,11 @@ char* file_stat (off_t* size_file) {
     struct stat buf = {};
     stat ("oneg_r.txt", &buf);
     *size_file = buf.st_size;
-    printf("size: %d\n", *size_file);
+    printf("size: %u\n", *size_file);
 
     char* text = (char*) calloc((size_t)(*size_file) + 1, sizeof(char));
     *size_file = fread(text, sizeof(char), (size_t) *size_file, oneg_r);
-    printf("fread: %d\n", *size_file);
+    printf("fread: %u\n", *size_file);
 
     text[*size_file] = '\0';
     fclose(oneg_r);
@@ -76,9 +76,9 @@ char* file_stat (off_t* size_file) {
 str_t* input_oneg (size_t* n_str, char** text) { 
     off_t size = 0;
     *text = file_stat(&size);
-    printf("%d %p\n", size, *text);
+    printf("%u %p\n", size, *text);
     *n_str = f_num_str(size, *text);
-    printf("n_str in input:%d\n", *n_str);
+    printf("n_str in input:%u\n", *n_str);
 
     str_t* arr_index = (str_t*) calloc(*n_str + 1, sizeof(str_t));
     
@@ -109,7 +109,7 @@ str_t* input_oneg (size_t* n_str, char** text) {
 }
 
 void output_s_text (str_t* arr_index, size_t n_str, FILE* oneg_w) {
-    for (int i = 0; i < n_str; i++) {
+    for (size_t i = 0; i < n_str; i++) {
         fputs(arr_index[i].str, oneg_w);
     }
     fprintf(oneg_w, "\n"); 
@@ -149,7 +149,7 @@ bool str_compare_right (void* str1_im, void* str2_im) {
     const str_t str1 = *(str_t*) str1_im;
     const str_t str2 = *(str_t*) str2_im;
  
-    size_t i = str1.size - 1, j = str2.size - 1;
+    int i = (int) str1.size - 1, j = (int) str2.size - 1;
     
     while (i >= 0 && j >= 0) {
         if (!isalpha(str1.str[i])) {
