@@ -123,16 +123,40 @@ void my_sort(void* arr, size_t size, size_t el_size, bool (*str_compare) (void* 
     char* j = right;
     if ((size_t) arr_ > (size_t) right) return;
     void* tmp = calloc(el_size, 1);
-    char* mid = arr_ + (size / 2) * el_size;
+    char* mid = arr_ + ((size - 1) / 2) * el_size;
+    
     while ((size_t) i <= (size_t) j) {
-        while (str_compare((void*) mid, (void*) i)) 
-            i = i + el_size;
-        while (str_compare((void*) j,   (void*) mid)) 
-            j = j - el_size;
+        while (true) {
+            if ((size_t) i != (size_t) mid) {
+                if (str_compare((void*) mid, (void*) i)) {
+                    i = i + el_size;
+                } else {
+                    break;
+                }
+            } else {
+                break;
+            }
+        }
+        while (true) {
+            if ((size_t) j != (size_t) mid) {
+                if (str_compare((void*) j, (void*) mid)) {
+                    j = j - el_size;
+                } else {
+                    break;
+                }
+            } else {
+                break;
+            }
+        }
         if ((size_t) i <= (size_t) j) {
             memcpy(tmp, (void*) i, el_size);
             memcpy((void*) i, (void*) j, el_size);
             memcpy((void*) j, tmp, el_size);
+            if ((size_t) j == (size_t) mid) {
+                mid = i;
+            } else if ((size_t) i == (size_t) mid) {
+                mid = j;
+            }
             i = i + el_size;
             j = j - el_size;
         }   
@@ -149,7 +173,7 @@ bool str_compare_right (void* str1_im, void* str2_im) {
     const str_t str1 = *(str_t*) str1_im;
     const str_t str2 = *(str_t*) str2_im;
  
-    int i = (int) str1.size - 1, j = (int) str2.size - 1;
+    ssize_t i = str1.size - 1, j = str2.size - 1;
     
     while (i >= 0 && j >= 0) {
         if (!isalpha(str1.str[i])) {
@@ -167,7 +191,11 @@ bool str_compare_right (void* str1_im, void* str2_im) {
             j--;
         }
     }
-    return false;
+    if (j == 0 && i != 0) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 bool str_compare_left (void* str1_im, void* str2_im) {
@@ -195,5 +223,9 @@ bool str_compare_left (void* str1_im, void* str2_im) {
             j++;
         }
     }
-    return false;
+    if (j == str2.size && i != str1.size) {
+        return true;
+    } else {
+        return false;
+    }
 }
